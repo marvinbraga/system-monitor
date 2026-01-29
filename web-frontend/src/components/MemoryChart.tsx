@@ -39,7 +39,6 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
   }
 
   const latestMetrics = history[history.length - 1].memory;
-  const latestData = chartData[chartData.length - 1];
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
