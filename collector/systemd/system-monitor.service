@@ -1,0 +1,71 @@
+[Unit]
+Description=System Monitor Collector Service
+Documentation=https://github.com/marvinbraga/system-monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=monitor
+Group=monitor
+
+# Working directory
+WorkingDirectory=/opt/system-monitor
+
+# Binary location
+ExecStart=/opt/system-monitor/collector
+
+# Environment variables
+Environment="RUST_LOG=info"
+Environment="DATABASE_URL=/var/lib/system-monitor/system-monitor.db"
+Environment="HOST=0.0.0.0"
+Environment="PORT=8080"
+Environment="ANOMALY_DETECTION_ENABLED=true"
+Environment="ANOMALY_LOG_PATH=/var/log/system-monitor/anomalies.log"
+Environment="COLLECTION_INTERVAL_SECS=5"
+
+# Restart policy
+Restart=always
+RestartSec=10
+StartLimitInterval=600
+StartLimitBurst=5
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/system-monitor /var/log/system-monitor
+
+# Process management
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Capabilities
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+
+# Hardening
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=system-monitor
+
+[Install]
+WantedBy=multi-user.target
