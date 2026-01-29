@@ -26,8 +26,8 @@ Aplicativo profissional de monitoramento de sistema desenvolvido em Rust para te
 - Leitura direta de /sys/class/hwmon/
 
 ✓ **Informações do Sistema**
-- Sistema Operacional (Zorin OS)
-- Versão do Kernel (6.14.0-37-generic)
+- Sistema Operacional 
+- Versão do Kernel
 - Hostname
 - Tempo de uptime
 - Número de CPUs
