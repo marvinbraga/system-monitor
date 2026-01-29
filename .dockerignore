@@ -1,0 +1,74 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# Rust
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+.yarn
+dist/
+build/
+
+# Logs
+*.log
+anomalies_*.log
+
+# Documentation
+*.md
+docs/
+
+# Test files
+test_*.sh
+test_*.rs
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+*.exe
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files
+*.db
+*.db-shm
+*.db-wal
+data/
+
+# Scripts (except what's needed)
+run.sh
+scripts/
+
+# Examples
+examples/
+exemplo_*.txt
+EXEMPLO_*.txt
+
+# Temporary files
+*.tmp
+*.temp
+fix_newlines.txt
+
+# Environment
+.env
+.env.local
+.env.*.local
