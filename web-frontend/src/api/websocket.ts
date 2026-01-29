@@ -30,7 +30,7 @@ export class WebSocketClient {
   private connectHandlers: Set<ConnectionHandler> = new Set();
   private disconnectHandlers: Set<ConnectionHandler> = new Set();
 
-  constructor(url: string = 'ws://localhost:8080/ws') {
+  constructor(url: string = `ws://${window.location.host}/ws`) {
     this.url = url;
   }
 
