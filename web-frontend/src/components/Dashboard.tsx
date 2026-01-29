@@ -134,7 +134,7 @@ export const Dashboard: React.FC = () => {
                 {currentMetrics.usb_devices.map((device, index) => (
                   <div
                     key={index}
-                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-white dark:bg-gray-750"
+                    className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-white dark:bg-gray-800"
                   >
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1">
