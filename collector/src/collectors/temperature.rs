@@ -1,6 +1,6 @@
 use shared::types::Temperature;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 
 /// Collects temperature readings from various hardware sensors
 pub struct TemperatureCollector;
@@ -26,7 +26,7 @@ impl TemperatureCollector {
     }
 
     /// Collects temperature readings from a specific hwmon directory
-    fn collect_from_hwmon(&self, hwmon_dir: &PathBuf, temperatures: &mut Vec<Temperature>) {
+    fn collect_from_hwmon(&self, hwmon_dir: &Path, temperatures: &mut Vec<Temperature>) {
         // Read the device/sensor name
         let sensor_name = fs::read_to_string(hwmon_dir.join("name"))
             .unwrap_or_else(|_| "unknown".to_string())

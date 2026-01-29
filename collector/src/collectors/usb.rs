@@ -1,6 +1,6 @@
 use shared::types::UsbDevice;
 use std::fs;
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::Command;
 
 /// Collects USB device information and detects timeouts
@@ -42,7 +42,7 @@ impl UsbCollector {
     }
 
     /// Reads USB device information from a sysfs path
-    fn read_device(&self, device_path: &PathBuf) -> Option<UsbDevice> {
+    fn read_device(&self, device_path: &Path) -> Option<UsbDevice> {
         // Check if this is a USB device (has idVendor and idProduct files)
         let vendor_file = device_path.join("idVendor");
         let product_file = device_path.join("idProduct");

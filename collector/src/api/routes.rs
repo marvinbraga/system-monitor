@@ -293,6 +293,7 @@ enum AppError {
     BadRequest(String),
     NotFound(String),
     DatabaseError(String),
+    #[allow(dead_code)]
     InternalError(String),
 }
 
