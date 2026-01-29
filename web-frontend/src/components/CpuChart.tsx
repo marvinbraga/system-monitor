@@ -94,18 +94,18 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
 
       {/* Per-core usage */}
       {history.length > 0 && history[history.length - 1].cpu.per_core.length > 0 && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Per-Core Usage</h3>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
             {history[history.length - 1].cpu.per_core.map((usage, index) => (
               <div key={index} className="text-center">
                 <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Core {index}</div>
-                <div className="relative h-16 bg-gray-100 rounded">
+                <div className="relative h-16 bg-gray-100 dark:bg-gray-700 rounded">
                   <div
-                    className="absolute bottom-0 w-full bg-blue-500 rounded transition-all duration-300"
+                    className="absolute bottom-0 w-full bg-blue-500 dark:bg-blue-600 rounded transition-all duration-300"
                     style={{ height: `${usage}%` }}
                   />
-                  <div className="absolute inset-0 flex items-center justify-center text-xs font-medium">
+                  <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-gray-900 dark:text-white">
                     {usage.toFixed(0)}%
                   </div>
                 </div>
