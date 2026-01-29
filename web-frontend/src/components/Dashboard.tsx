@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { useMetrics } from '../hooks/useMetrics';
 import { useTheme } from '../hooks/useTheme';
 import { CpuChart } from './CpuChart';
@@ -7,6 +7,9 @@ import { TemperatureGauge } from './TemperatureGauge';
 import { DiskUsage } from './DiskUsage';
 import { AnomalyList } from './AnomalyList';
 import { SystemInfo } from './SystemInfo';
+import { UsbDevice } from '../types/metrics';
+
+type UsbSortOption = 'product-asc' | 'product-desc' | 'manufacturer-asc' | 'manufacturer-desc' | 'id-asc' | 'id-desc' | 'none';
 
 /**
  * Main dashboard component
@@ -15,6 +18,41 @@ export const Dashboard: React.FC = () => {
   const { currentMetrics, metricsHistory, anomalies, loading, error, isConnected, refresh } =
     useMetrics();
   const { theme, toggleTheme } = useTheme();
+  const [usbSortBy, setUsbSortBy] = useState<UsbSortOption>('product-asc');
+
+  // Sort USB devices based on selected criterion
+  const sortedUsbDevices = useMemo(() => {
+    if (!currentMetrics?.usb_devices) return [];
+
+    const devices = [...currentMetrics.usb_devices];
+
+    switch (usbSortBy) {
+      case 'product-asc':
+        return devices.sort((a, b) =>
+          (a.product || 'Unknown Device').localeCompare(b.product || 'Unknown Device')
+        );
+      case 'product-desc':
+        return devices.sort((a, b) =>
+          (b.product || 'Unknown Device').localeCompare(a.product || 'Unknown Device')
+        );
+      case 'manufacturer-asc':
+        return devices.sort((a, b) =>
+          (a.manufacturer || 'Unknown Manufacturer').localeCompare(b.manufacturer || 'Unknown Manufacturer')
+        );
+      case 'manufacturer-desc':
+        return devices.sort((a, b) =>
+          (b.manufacturer || 'Unknown Manufacturer').localeCompare(a.manufacturer || 'Unknown Manufacturer')
+        );
+      case 'id-asc':
+        return devices.sort((a, b) => a.id.localeCompare(b.id));
+      case 'id-desc':
+        return devices.sort((a, b) => b.id.localeCompare(a.id));
+      case 'none':
+        return devices;
+      default:
+        return devices;
+    }
+  }, [currentMetrics?.usb_devices, usbSortBy]);
 
   if (loading) {
     return (
@@ -129,9 +167,27 @@ export const Dashboard: React.FC = () => {
           {/* USB Devices */}
           {currentMetrics && currentMetrics.usb_devices.length > 0 && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-              <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">USB Devices</h2>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800 dark:text-white">USB Devices</h2>
+                <div className="flex items-center space-x-2">
+                  <label className="text-sm text-gray-600 dark:text-gray-400">Sort by:</label>
+                  <select
+                    value={usbSortBy}
+                    onChange={(e) => setUsbSortBy(e.target.value as UsbSortOption)}
+                    className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="product-asc">Product (A-Z)</option>
+                    <option value="product-desc">Product (Z-A)</option>
+                    <option value="manufacturer-asc">Manufacturer (A-Z)</option>
+                    <option value="manufacturer-desc">Manufacturer (Z-A)</option>
+                    <option value="id-asc">ID (A-Z)</option>
+                    <option value="id-desc">ID (Z-A)</option>
+                    <option value="none">Filesystem Order</option>
+                  </select>
+                </div>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {currentMetrics.usb_devices.map((device, index) => (
+                {sortedUsbDevices.map((device, index) => (
                   <div
                     key={index}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow bg-white dark:bg-gray-800"
