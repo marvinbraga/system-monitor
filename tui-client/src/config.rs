@@ -15,7 +15,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            api_url: "http://localhost:8080".to_string(),
+            api_url: "http://localhost:5253".to_string(),
             refresh_rate: Duration::from_secs(2),
             use_websocket: false,
         }
@@ -75,14 +75,14 @@ fn print_help() {
     println!("    tui-client [OPTIONS]");
     println!();
     println!("OPTIONS:");
-    println!("    -u, --api-url <URL>        API base URL (default: http://localhost:8080)");
+    println!("    -u, --api-url <URL>        API base URL (default: http://localhost:5253)");
     println!("    -r, --refresh <SECONDS>    Refresh rate in seconds (default: 2)");
     println!("    -w, --websocket            Use WebSocket streaming instead of HTTP polling");
     println!("    -h, --help                 Print help information");
     println!();
     println!("EXAMPLES:");
     println!("    tui-client");
-    println!("    tui-client --api-url http://192.168.1.100:8080 --refresh 5");
+    println!("    tui-client --api-url http://192.168.1.100:5253 --refresh 5");
     println!("    tui-client -w -r 1");
     println!();
     println!("CONTROLS:");
