@@ -30,9 +30,9 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
 
   if (chartData.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">CPU Usage</h2>
-        <div className="text-gray-500">No data available</div>
+        <div className="text-gray-500 dark:text-gray-400">No data available</div>
       </div>
     );
   }
@@ -40,12 +40,12 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
   const latestUsage = chartData[chartData.length - 1]?.usage ?? 0;
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">CPU Usage</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">CPU Usage</h2>
         <div className="text-right">
           <div className="text-3xl font-bold text-blue-600">{latestUsage.toFixed(1)}%</div>
-          <div className="text-xs text-gray-500">Current Usage</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Current Usage</div>
         </div>
       </div>
 
@@ -95,11 +95,11 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
       {/* Per-core usage */}
       {history.length > 0 && history[history.length - 1].cpu.per_core.length > 0 && (
         <div className="mt-4 pt-4 border-t border-gray-200">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Per-Core Usage</h3>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Per-Core Usage</h3>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
             {history[history.length - 1].cpu.per_core.map((usage, index) => (
               <div key={index} className="text-center">
-                <div className="text-xs text-gray-500 mb-1">Core {index}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Core {index}</div>
                 <div className="relative h-16 bg-gray-100 rounded">
                   <div
                     className="absolute bottom-0 w-full bg-blue-500 rounded transition-all duration-300"

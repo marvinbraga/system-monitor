@@ -12,9 +12,9 @@ interface DiskUsageProps {
 export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
   if (disks.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Disk Usage</h2>
-        <div className="text-gray-500">No disk information available</div>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-white">Disk Usage</h2>
+        <div className="text-gray-500 dark:text-gray-400">No disk information available</div>
       </div>
     );
   }
@@ -24,24 +24,24 @@ export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
   const totalAvailable = disks.reduce((sum, disk) => sum + disk.available, 0);
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Disk Usage</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Disk Usage</h2>
         <div className="text-right">
-          <div className="text-lg font-bold text-gray-800">
+          <div className="text-lg font-bold text-gray-800 dark:text-white">
             {formatBytes(totalUsed)} / {formatBytes(totalSpace)}
           </div>
-          <div className="text-xs text-gray-500">Total Space</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Total Space</div>
         </div>
       </div>
 
       {/* Overall usage bar */}
       <div className="mb-6">
-        <div className="flex justify-between text-sm text-gray-600 mb-2">
+        <div className="flex justify-between text-sm text-gray-600 dark:text-gray-300 mb-2">
           <span>Overall Usage</span>
           <span>{formatPercent((totalUsed / totalSpace) * 100)}</span>
         </div>
-        <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+        <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all duration-300 ${getUsageBackgroundColor(
               (totalUsed / totalSpace) * 100
@@ -58,12 +58,12 @@ export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
-                  <h3 className="text-sm font-semibold text-gray-800">{disk.name}</h3>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-white">{disk.name}</h3>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">
                     {disk.mount_point}
                   </span>
                 </div>
-                <div className="mt-1 text-xs text-gray-600">
+                <div className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                   {formatBytes(disk.used)} / {formatBytes(disk.total)} used
                   <span className="mx-2">•</span>
                   {formatBytes(disk.available)} available
@@ -85,7 +85,7 @@ export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
             </div>
 
             {/* Usage bar */}
-            <div className="h-3 bg-gray-100 rounded-full overflow-hidden mb-2">
+            <div className="h-3 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden mb-2">
               <div
                 className={`h-full transition-all duration-300 ${getUsageBackgroundColor(
                   disk.usage_percent
@@ -95,7 +95,7 @@ export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
             </div>
 
             {/* I/O stats */}
-            <div className="flex justify-between text-xs text-gray-600 mt-2">
+            <div className="flex justify-between text-xs text-gray-600 dark:text-gray-300 mt-2">
               <div className="flex items-center space-x-4">
                 <div className="flex items-center">
                   <svg
@@ -136,18 +136,18 @@ export const DiskUsage: React.FC<DiskUsageProps> = ({ disks }) => {
       </div>
 
       {/* Summary stats */}
-      <div className="mt-6 pt-4 border-t border-gray-200 grid grid-cols-3 gap-4">
+      <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700 grid grid-cols-3 gap-4">
         <div className="text-center">
-          <div className="text-2xl font-bold text-gray-800">{disks.length}</div>
-          <div className="text-xs text-gray-500">Disks</div>
+          <div className="text-2xl font-bold text-gray-800 dark:text-white">{disks.length}</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Disks</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold text-blue-600">{formatBytes(totalUsed)}</div>
-          <div className="text-xs text-gray-500">Used</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Used</div>
         </div>
         <div className="text-center">
           <div className="text-2xl font-bold text-green-600">{formatBytes(totalAvailable)}</div>
-          <div className="text-xs text-gray-500">Available</div>
+          <div className="text-xs text-gray-500 dark:text-gray-400">Available</div>
         </div>
       </div>
     </div>

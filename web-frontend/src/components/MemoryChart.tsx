@@ -31,9 +31,9 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
 
   if (chartData.length === 0 || history.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4">Memory Usage</h2>
-        <div className="text-gray-500">No data available</div>
+        <div className="text-gray-500 dark:text-gray-400">No data available</div>
       </div>
     );
   }
@@ -41,14 +41,14 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
   const latestMetrics = history[history.length - 1].memory;
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-800">Memory Usage</h2>
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Memory Usage</h2>
         <div className="text-right">
           <div className="text-3xl font-bold text-green-600">
             {formatPercent(latestMetrics.usage_percent)}
           </div>
-          <div className="text-xs text-gray-500">
+          <div className="text-xs text-gray-500 dark:text-gray-400">
             {formatBytes(latestMetrics.used)} / {formatBytes(latestMetrics.total)}
           </div>
         </div>
@@ -102,38 +102,38 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
       <div className="mt-4 pt-4 border-t border-gray-200">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">RAM</h3>
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">RAM</h3>
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Used:</span>
+                <span className="text-gray-600 dark:text-gray-300">Used:</span>
                 <span className="font-medium">{formatBytes(latestMetrics.used)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Available:</span>
+                <span className="text-gray-600 dark:text-gray-300">Available:</span>
                 <span className="font-medium">{formatBytes(latestMetrics.available)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total:</span>
+                <span className="text-gray-600 dark:text-gray-300">Total:</span>
                 <span className="font-medium">{formatBytes(latestMetrics.total)}</span>
               </div>
             </div>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Swap</h3>
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Swap</h3>
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Used:</span>
+                <span className="text-gray-600 dark:text-gray-300">Used:</span>
                 <span className="font-medium">{formatBytes(latestMetrics.swap_used)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Free:</span>
+                <span className="text-gray-600 dark:text-gray-300">Free:</span>
                 <span className="font-medium">
                   {formatBytes(latestMetrics.swap_total - latestMetrics.swap_used)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Total:</span>
+                <span className="text-gray-600 dark:text-gray-300">Total:</span>
                 <span className="font-medium">{formatBytes(latestMetrics.swap_total)}</span>
               </div>
             </div>
