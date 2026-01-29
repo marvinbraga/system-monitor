@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: system-monitor-web
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - system-monitor
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    depends_on:
+      - backend
+
+  # This assumes the backend is also containerized
+  # Adjust according to your actual backend setup
+  backend:
+    image: system-monitor-backend:latest  # Replace with actual backend image
+    container_name: system-monitor-backend
+    ports:
+      - "8080:8080"
+    networks:
+      - system-monitor
+    restart: unless-stopped
+    volumes:
+      - backend-data:/var/lib/system-monitor
+    environment:
+      - RUST_LOG=info
+
+networks:
+  system-monitor:
+    driver: bridge
+
+volumes:
+  backend-data:
