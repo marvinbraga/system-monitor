@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { SystemMetrics } from '../types/metrics';
+import { useTheme } from '../hooks/useTheme';
 import { formatBytes, formatPercent } from '../utils/formatters';
 import { format } from 'date-fns';
 
@@ -20,6 +21,7 @@ interface MemoryChartProps {
  * Memory usage chart component
  */
 export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
+  const { theme } = useTheme();
   const chartData = useMemo(() => {
     return history.map((metrics) => ({
       time: format(new Date(metrics.timestamp), 'HH:mm:ss'),
@@ -39,6 +41,13 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
   }
 
   const latestMetrics = history[history.length - 1].memory;
+
+  // Theme-aware colors
+  const axisColor = theme === 'dark' ? '#9ca3af' : '#6b7280';
+  const gridColor = theme === 'dark' ? '#374151' : '#e5e7eb';
+  const tooltipBg = theme === 'dark' ? 'rgba(31, 41, 55, 0.95)' : 'rgba(255, 255, 255, 0.95)';
+  const tooltipBorder = theme === 'dark' ? '#4b5563' : '#e5e7eb';
+  const tooltipText = theme === 'dark' ? '#f3f4f6' : '#111827';
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
@@ -62,28 +71,28 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
               <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
+          <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
           <XAxis
             dataKey="time"
-            stroke="currentColor"
-            tick={{ fontSize: 12, fill: 'currentColor' }}
+            stroke={axisColor}
+            tick={{ fontSize: 12, fill: axisColor }}
             interval="preserveStartEnd"
           />
           <YAxis
-            stroke="currentColor"
-            tick={{ fontSize: 12, fill: 'currentColor' }}
+            stroke={axisColor}
+            tick={{ fontSize: 12, fill: axisColor }}
             domain={[0, 'dataMax']}
-            label={{ value: 'Memory (GB)', angle: -90, position: 'insideLeft', fill: 'currentColor' }}
+            label={{ value: 'Memory (GB)', angle: -90, position: 'insideLeft', fill: axisColor }}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              border: '1px solid #e5e7eb',
+              backgroundColor: tooltipBg,
+              border: `1px solid ${tooltipBorder}`,
               borderRadius: '0.375rem',
+              color: tooltipText,
             }}
-            wrapperClassName="dark:[&_.recharts-tooltip-wrapper]:opacity-100"
-            labelClassName="dark:text-gray-900"
-            itemStyle={{ color: '#111827' }}
+            labelStyle={{ color: tooltipText }}
+            itemStyle={{ color: tooltipText }}
             formatter={(value: number, name: string) => {
               if (name === 'usagePercent') {
                 return [`${value.toFixed(2)}%`, 'Usage %'];
