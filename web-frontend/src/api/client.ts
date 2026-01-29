@@ -7,7 +7,7 @@ import { SystemMetrics, Anomaly } from '../types/metrics';
 class ApiClient {
   private client: AxiosInstance;
 
-  constructor(baseURL: string = '/api') {
+  constructor(baseURL: string = '/api/v1') {
     this.client = axios.create({
       baseURL,
       timeout: 10000,
@@ -30,8 +30,8 @@ class ApiClient {
    * Get current system metrics
    */
   async getCurrentMetrics(): Promise<SystemMetrics> {
-    const response = await this.client.get<SystemMetrics>('/metrics/current');
-    return response.data;
+    const response = await this.client.get<{data: SystemMetrics, status: string}>('/metrics/current');
+    return response.data.data;
   }
 
   /**
@@ -39,10 +39,10 @@ class ApiClient {
    * @param limit - Number of records to fetch (default: 100)
    */
   async getMetricsHistory(limit: number = 100): Promise<SystemMetrics[]> {
-    const response = await this.client.get<SystemMetrics[]>('/metrics/history', {
+    const response = await this.client.get<{data: {metrics: SystemMetrics[]}, status: string}>('/metrics/history', {
       params: { limit },
     });
-    return response.data;
+    return response.data.data.metrics;
   }
 
   /**
@@ -62,10 +62,10 @@ class ApiClient {
    * @param limit - Number of anomalies to fetch (default: 50)
    */
   async getAnomalies(limit: number = 50): Promise<Anomaly[]> {
-    const response = await this.client.get<Anomaly[]>('/anomalies', {
+    const response = await this.client.get<{data: {anomalies: Anomaly[]}, status: string}>('/anomalies', {
       params: { limit },
     });
-    return response.data;
+    return response.data.data.anomalies;
   }
 
   /**
