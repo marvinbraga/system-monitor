@@ -62,18 +62,18 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
               <stop offset="95%" stopColor="#10b981" stopOpacity={0.1} />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
           <XAxis
             dataKey="time"
-            stroke="#9ca3af"
-            tick={{ fontSize: 12 }}
+            stroke="currentColor"
+            tick={{ fontSize: 12, fill: 'currentColor' }}
             interval="preserveStartEnd"
           />
           <YAxis
-            stroke="#9ca3af"
-            tick={{ fontSize: 12 }}
+            stroke="currentColor"
+            tick={{ fontSize: 12, fill: 'currentColor' }}
             domain={[0, 'dataMax']}
-            label={{ value: 'Memory (GB)', angle: -90, position: 'insideLeft' }}
+            label={{ value: 'Memory (GB)', angle: -90, position: 'insideLeft', fill: 'currentColor' }}
           />
           <Tooltip
             contentStyle={{
@@ -81,6 +81,9 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
               border: '1px solid #e5e7eb',
               borderRadius: '0.375rem',
             }}
+            wrapperClassName="dark:[&_.recharts-tooltip-wrapper]:opacity-100"
+            labelClassName="dark:text-gray-900"
+            itemStyle={{ color: '#111827' }}
             formatter={(value: number, name: string) => {
               if (name === 'usagePercent') {
                 return [`${value.toFixed(2)}%`, 'Usage %'];
@@ -99,22 +102,22 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
       </ResponsiveContainer>
 
       {/* Memory breakdown */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
+      <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
         <div className="grid grid-cols-2 gap-4">
           <div>
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">RAM</h3>
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Used:</span>
-                <span className="font-medium">{formatBytes(latestMetrics.used)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Used:</span>
+                <span className="font-medium text-gray-800 dark:text-white">{formatBytes(latestMetrics.used)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Available:</span>
-                <span className="font-medium">{formatBytes(latestMetrics.available)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Available:</span>
+                <span className="font-medium text-gray-800 dark:text-white">{formatBytes(latestMetrics.available)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Total:</span>
-                <span className="font-medium">{formatBytes(latestMetrics.total)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Total:</span>
+                <span className="font-medium text-gray-800 dark:text-white">{formatBytes(latestMetrics.total)}</span>
               </div>
             </div>
           </div>
@@ -123,18 +126,18 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Swap</h3>
             <div className="space-y-1">
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Used:</span>
-                <span className="font-medium">{formatBytes(latestMetrics.swap_used)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Used:</span>
+                <span className="font-medium text-gray-800 dark:text-white">{formatBytes(latestMetrics.swap_used)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Free:</span>
-                <span className="font-medium">
+                <span className="text-gray-600 dark:text-gray-400">Free:</span>
+                <span className="font-medium text-gray-800 dark:text-white">
                   {formatBytes(latestMetrics.swap_total - latestMetrics.swap_used)}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-300">Total:</span>
-                <span className="font-medium">{formatBytes(latestMetrics.swap_total)}</span>
+                <span className="text-gray-600 dark:text-gray-400">Total:</span>
+                <span className="font-medium text-gray-800 dark:text-white">{formatBytes(latestMetrics.swap_total)}</span>
               </div>
             </div>
           </div>
@@ -142,9 +145,9 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
 
         {/* Visual bar */}
         <div className="mt-4">
-          <div className="h-4 bg-gray-100 rounded-full overflow-hidden">
+          <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
             <div
-              className="h-full bg-green-500 transition-all duration-300"
+              className="h-full bg-green-500 dark:bg-green-600 transition-all duration-300"
               style={{ width: `${latestMetrics.usage_percent}%` }}
             />
           </div>

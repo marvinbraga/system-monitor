@@ -51,18 +51,18 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
 
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <CartesianGrid strokeDasharray="3 3" stroke="currentColor" opacity={0.1} />
           <XAxis
             dataKey="time"
-            stroke="#9ca3af"
-            tick={{ fontSize: 12 }}
+            stroke="currentColor"
+            tick={{ fontSize: 12, fill: 'currentColor' }}
             interval="preserveStartEnd"
           />
           <YAxis
-            stroke="#9ca3af"
-            tick={{ fontSize: 12 }}
+            stroke="currentColor"
+            tick={{ fontSize: 12, fill: 'currentColor' }}
             domain={[0, 100]}
-            label={{ value: 'Usage %', angle: -90, position: 'insideLeft' }}
+            label={{ value: 'Usage %', angle: -90, position: 'insideLeft', fill: 'currentColor' }}
           />
           <Tooltip
             contentStyle={{
@@ -70,8 +70,11 @@ export const CpuChart: React.FC<CpuChartProps> = ({ history }) => {
               border: '1px solid #e5e7eb',
               borderRadius: '0.375rem',
             }}
+            wrapperClassName="dark:[&_.recharts-tooltip-wrapper]:opacity-100"
+            labelClassName="dark:text-gray-900"
+            itemStyle={{ color: '#111827' }}
           />
-          <Legend />
+          <Legend wrapperStyle={{ color: 'currentColor' }} />
           <Line
             type="monotone"
             dataKey="usage"
