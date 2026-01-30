@@ -6,7 +6,7 @@ mod rest;
 mod routes;
 mod websocket;
 
-pub use rest::{start_server, ServerConfig};
+pub use rest::{start_server, start_server_with_shutdown, ServerConfig};
 
 use std::sync::Arc;
 use tokio::sync::RwLock;

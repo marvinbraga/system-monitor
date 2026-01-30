@@ -7,6 +7,7 @@ use std::time::Duration;
 
 use axum::http::{header, Method};
 use tokio::sync::RwLock;
+use tokio_util::sync::CancellationToken;
 use tower_http::{
     cors::CorsLayer,
     trace::{DefaultMakeSpan, DefaultOnResponse, TraceLayer},
@@ -51,7 +52,11 @@ impl Default for ServerConfig {
 /// Starts the REST API and WebSocket server
 ///
 /// This function initializes the Axum server with all routes, middleware,
-/// and graceful shutdown handling.
+/// and graceful shutdown handling. It creates its own internal shutdown
+/// signal handler that listens for SIGINT/SIGTERM.
+///
+/// For coordinated shutdown with other components, use `start_server_with_shutdown`
+/// which accepts an external `CancellationToken`.
 ///
 /// # Arguments
 /// * `config` - Server configuration
@@ -66,6 +71,41 @@ pub async fn start_server(
     current_metrics: Arc<RwLock<Option<SystemMetrics>>>,
     recent_anomalies: Arc<RwLock<Vec<Anomaly>>>,
     repository: Arc<MetricsRepository>,
+) -> anyhow::Result<()> {
+    // Create an internal token for backward compatibility
+    let shutdown_token = CancellationToken::new();
+    let token_clone = shutdown_token.clone();
+
+    // Spawn a task that listens for OS signals and cancels the token
+    tokio::spawn(async move {
+        shutdown_signal().await;
+        token_clone.cancel();
+    });
+
+    start_server_with_shutdown(config, current_metrics, recent_anomalies, repository, shutdown_token).await
+}
+
+/// Starts the REST API and WebSocket server with an external shutdown token
+///
+/// This function initializes the Axum server with all routes, middleware,
+/// and graceful shutdown handling using an externally provided `CancellationToken`.
+/// This allows coordinated shutdown across multiple components.
+///
+/// # Arguments
+/// * `config` - Server configuration
+/// * `current_metrics` - Shared current system metrics
+/// * `recent_anomalies` - Shared recent anomalies buffer
+/// * `repository` - Database repository for historical data
+/// * `shutdown_token` - External cancellation token for coordinated shutdown
+///
+/// # Returns
+/// Result indicating success or error with message
+pub async fn start_server_with_shutdown(
+    config: ServerConfig,
+    current_metrics: Arc<RwLock<Option<SystemMetrics>>>,
+    recent_anomalies: Arc<RwLock<Vec<Anomaly>>>,
+    repository: Arc<MetricsRepository>,
+    shutdown_token: CancellationToken,
 ) -> anyhow::Result<()> {
     info!("Starting REST API server...");
 
@@ -133,9 +173,10 @@ pub async fn start_server(
         .await
         .map_err(|e| anyhow::anyhow!("Failed to bind to {}: {}", addr, e))?;
 
-    // Start server with graceful shutdown
+    // Start server with graceful shutdown using external token
+    // Use cancelled_owned() to get an owned future that satisfies the 'static requirement
     axum::serve(listener, app)
-        .with_graceful_shutdown(shutdown_signal())
+        .with_graceful_shutdown(shutdown_token.cancelled_owned())
         .await
         .map_err(|e| anyhow::anyhow!("Server error: {}", e))?;
 

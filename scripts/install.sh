@@ -109,15 +109,42 @@ create_directories() {
 
 # Build the project
 build_project() {
-    print_step "Building collector service (release mode)"
     cd "$PROJECT_ROOT"
 
-    if ! command -v cargo &> /dev/null; then
-        print_error "Cargo is not installed. Please install Rust from https://rustup.rs/"
-        exit 1
+    # Check if binary already exists
+    if [ -f "$PROJECT_ROOT/target/release/collector" ]; then
+        print_info "Binary already exists at target/release/collector, skipping build"
+        return 0
     fi
 
-    cargo build --release --package collector
+    print_step "Building collector service (release mode)"
+
+    # Try to find cargo in the original user's environment
+    CARGO_CMD=""
+
+    # If running with sudo, try to use the original user's cargo
+    if [ -n "$SUDO_USER" ] && [ "$SUDO_USER" != "root" ]; then
+        USER_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+        if [ -f "$USER_HOME/.cargo/bin/cargo" ]; then
+            print_info "Using cargo from $SUDO_USER's environment"
+            CARGO_CMD="sudo -u $SUDO_USER $USER_HOME/.cargo/bin/cargo"
+        fi
+    fi
+
+    # Fallback to system cargo
+    if [ -z "$CARGO_CMD" ]; then
+        if command -v cargo &> /dev/null; then
+            CARGO_CMD="cargo"
+        else
+            print_error "Cargo is not installed."
+            print_error "Please build manually first: cargo build --release --package collector"
+            print_error "Then run this script again, or use: sudo ./scripts/install-no-build.sh"
+            exit 1
+        fi
+    fi
+
+    # Build the project
+    $CARGO_CMD build --release --package collector
 
     if [ ! -f "$PROJECT_ROOT/target/release/collector" ]; then
         print_error "Build failed. Binary not found at target/release/collector"
@@ -205,8 +232,10 @@ AmbientCapabilities=
 
 # Environment
 Environment="RUST_LOG=info"
-Environment="CONFIG_PATH=$CONFIG_DIR/config.toml"
-Environment="DATABASE_PATH=$DATA_DIR/metrics.db"
+Environment="DATABASE_URL=sqlite://$DATA_DIR/metrics.db"
+Environment="HOST=127.0.0.1"
+Environment="PORT=5253"
+Environment="COLLECTION_INTERVAL_SECS=2"
 
 # Start the service
 ExecStart=$INSTALL_DIR/collector

@@ -165,6 +165,7 @@ The collector uses a modular design with separate collectors for each metric typ
 - **`collectors/disk.rs`**: Disk usage, I/O statistics, mount points (via sysinfo)
 - **`collectors/usb.rs`**: USB device enumeration, timeout detection (via sysinfo)
 - **`collectors/network.rs`**: Network bytes/packets RX/TX (via sysinfo)
+- **`collectors/gpu.rs`**: NVIDIA GPU metrics via `nvidia-smi` (usage, temperature, VRAM, power, fan speed)
 
 All collectors implement consistent error handling and are called by `MetricsCollector::collect_all()` in the main loop.
 
@@ -174,8 +175,9 @@ The `detector/` module implements rule-based anomaly detection:
 
 - **`rules.rs`**: `AnomalyRules` checks metrics against configurable thresholds
 - **`analyzer.rs`**: Trend analysis and pattern recognition
-- Thresholds: CPU (70/90%), Memory (80/95%), Temperature (75/85°C), Disk (80/90%)
+- Thresholds: CPU (70/90%), Memory (80/95%), Temperature (75/85°C), Disk (80/90%), GPU (90°C temp, 95% usage/VRAM)
 - Generates `Anomaly` objects with severity (Info/Warning/Critical), category, and detailed messages
+- Categories: Cpu, Memory, Temperature, Disk, Usb, Network, Gpu, System
 - Anomalies are stored in database and kept in memory (last 100)
 
 ### API Layer
@@ -322,3 +324,46 @@ sudo journalctl -u system-monitor-collector -n 100 --no-pager
 - Ensure API URL is correct: `./target/release/tui-client --api-url http://localhost:5253`
 - Check terminal size (minimum 80x24)
 - Try with `--websocket` flag for real-time updates
+
+## Graceful Shutdown
+
+The collector implements graceful shutdown using a `CancellationToken` pattern:
+
+1. **Signal Reception**: Main task listens for SIGTERM (systemd) or SIGINT (Ctrl+C)
+2. **Token Cancellation**: Shutdown signal cancels shared token
+3. **Task Coordination**: All async tasks check token and exit gracefully
+4. **Resource Cleanup**: Database connections closed explicitly
+5. **Clean Exit**: Process exits with code 0
+
+**Expected shutdown time:** < 5 seconds
+
+### Shutdown Sequence
+
+```
+SIGTERM received
+  ├─> CancellationToken cancelled
+  ├─> API Server stops accepting connections
+  │   └─> Completes active requests
+  ├─> Collection Loop exits current iteration
+  │   └─> Stops collecting metrics
+  ├─> Database pool closed
+  │   └─> Active connections drained
+  └─> Process exits with code 0
+```
+
+### Monitoring Shutdown
+
+```bash
+# Watch shutdown logs
+sudo journalctl -u system-monitor -f
+
+# Expected log sequence:
+# "Received SIGTERM, initiating graceful shutdown..."
+# "Collection loop received shutdown signal"
+# "Collection loop stopped"
+# "API server task completed"
+# "Collection loop task completed"
+# "Closing database connection..."
+# "Database connection pool closed"
+# "Shutdown complete!"
+```
