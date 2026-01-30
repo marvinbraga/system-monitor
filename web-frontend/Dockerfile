@@ -6,13 +6,13 @@ FROM node:20-alpine as builder
 WORKDIR /app
 
 # Copy package files
-COPY web-frontend/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm ci --only=production
 
 # Copy source code
-COPY web-frontend/ ./
+COPY . ./
 
 # Build the application
 RUN npm run build
@@ -41,9 +41,6 @@ RUN mkdir -p /var/cache/nginx/client_temp \
     chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /usr/share/nginx/html && \
     chmod -R 755 /usr/share/nginx/html
-
-# Switch to nginx user
-USER nginx
 
 # Expose port
 EXPOSE 80

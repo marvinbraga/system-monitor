@@ -1,4 +1,5 @@
 import { SystemMetrics, Anomaly } from '../types/metrics';
+import { API_CONFIG } from '../config/api';
 
 export type WebSocketMessageType = 'metrics' | 'anomaly' | 'connected' | 'error';
 
@@ -30,7 +31,7 @@ export class WebSocketClient {
   private connectHandlers: Set<ConnectionHandler> = new Set();
   private disconnectHandlers: Set<ConnectionHandler> = new Set();
 
-  constructor(url: string = `ws://${window.location.host}/ws`) {
+  constructor(url: string = `${API_CONFIG.WS_URL}/ws`) {
     this.url = url;
   }
 

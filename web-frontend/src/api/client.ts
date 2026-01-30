@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import { SystemMetrics, Anomaly } from '../types/metrics';
+import { API_CONFIG } from '../config/api';
 
 /**
  * API client for system monitor backend
@@ -7,10 +8,10 @@ import { SystemMetrics, Anomaly } from '../types/metrics';
 class ApiClient {
   private client: AxiosInstance;
 
-  constructor(baseURL: string = '/api/v1') {
+  constructor(baseURL: string = `${API_CONFIG.BASE_URL}/api/v1`) {
     this.client = axios.create({
       baseURL,
-      timeout: 10000,
+      timeout: API_CONFIG.TIMEOUT,
       headers: {
         'Content-Type': 'application/json',
       },
