@@ -19,6 +19,9 @@ const TEMPERATURE_DROP_THRESHOLD: f32 = 30.0; // °C decrease
 const DISK_CRITICAL_THRESHOLD: f32 = 90.0; // % usage
 const DISK_IO_HIGH_THRESHOLD: f64 = 500.0; // MB/s
 const LOAD_AVG_MULTIPLIER: f64 = 2.0; // times number of CPUs
+const GPU_TEMP_CRITICAL: f32 = 90.0; // °C
+const GPU_USAGE_CRITICAL: f32 = 95.0; // % usage
+const GPU_MEMORY_CRITICAL: f32 = 95.0; // % usage
 
 /// Stores state for anomaly detection and implements detection rules
 pub struct AnomalyRules {
@@ -243,6 +246,50 @@ impl AnomalyRules {
                 }),
             ));
         }
+
+        // GPU anomalies detection
+        if let Some(ref gpu) = current.gpu {
+            // GPU temperature critical
+            if gpu.temperature > GPU_TEMP_CRITICAL {
+                anomalies.push(self.create_anomaly(
+                    AnomalySeverity::Critical,
+                    AnomalyCategory::Gpu,
+                    format!("Critical GPU temperature: {:.0}°C", gpu.temperature),
+                    serde_json::json!({
+                        "temperature": gpu.temperature,
+                        "gpu_name": gpu.name,
+                    }),
+                ));
+            }
+
+            // GPU usage critical
+            if gpu.usage_percent > GPU_USAGE_CRITICAL {
+                anomalies.push(self.create_anomaly(
+                    AnomalySeverity::Warning,
+                    AnomalyCategory::Gpu,
+                    format!("Critical GPU usage: {:.0}%", gpu.usage_percent),
+                    serde_json::json!({
+                        "usage": gpu.usage_percent,
+                        "gpu_name": gpu.name,
+                    }),
+                ));
+            }
+
+            // GPU memory critical
+            if gpu.memory_usage_percent > GPU_MEMORY_CRITICAL {
+                anomalies.push(self.create_anomaly(
+                    AnomalySeverity::Warning,
+                    AnomalyCategory::Gpu,
+                    format!("Critical GPU memory usage: {:.0}%", gpu.memory_usage_percent),
+                    serde_json::json!({
+                        "memory_usage": gpu.memory_usage_percent,
+                        "memory_used_mb": gpu.memory_used_mb,
+                        "memory_total_mb": gpu.memory_total_mb,
+                        "gpu_name": gpu.name,
+                    }),
+                ));
+            }
+        }
     }
 
     /// Helper method to create an anomaly with consistent structure
@@ -326,6 +373,7 @@ mod tests {
                 rx_packets: 0,
                 tx_packets: 0,
             },
+            gpu: None,
         }
     }
 

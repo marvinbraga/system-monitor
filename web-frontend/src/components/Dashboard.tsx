@@ -8,6 +8,7 @@ import { TemperatureGauge } from './TemperatureGauge';
 import { DiskUsage } from './DiskUsage';
 import { AnomalyList } from './AnomalyList';
 import { SystemInfo } from './SystemInfo';
+import { GpuChart } from './GpuChart';
 
 type UsbSortOption = 'product-asc' | 'product-desc' | 'manufacturer-asc' | 'manufacturer-desc' | 'id-asc' | 'id-desc' | 'none';
 
@@ -150,6 +151,7 @@ export const Dashboard: React.FC = () => {
             <CpuChart history={metricsHistory} />
             <MemoryChart history={metricsHistory} />
             <TemperatureChart history={metricsHistory} />
+            <GpuChart history={metricsHistory} />
           </div>
 
           {/* Temperature and Disk */}

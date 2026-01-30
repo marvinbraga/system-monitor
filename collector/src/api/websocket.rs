@@ -147,6 +147,7 @@ mod tests {
                 rx_packets: 10_000,
                 tx_packets: 5_000,
             },
+            gpu: None,
         }
     }
 

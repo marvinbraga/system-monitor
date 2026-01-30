@@ -75,6 +75,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             rx_packets: 1000,
             tx_packets: 500,
         },
+        gpu: None,
     };
     println!("   ✓ Sample metrics created\n");
 

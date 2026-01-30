@@ -116,7 +116,7 @@ export const AnomalyList: React.FC<AnomalyListProps> = ({ anomalies, onRefresh }
                   onClick={() => toggleFilter('severity', severity)}
                   className={`px-3 py-1 text-xs font-medium rounded-full border transition-colors ${
                     isSelected
-                      ? getSeverityBadgeColor(severity as any)
+                      ? getSeverityBadgeColor(severity as AnomalySeverity)
                       : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600'
                   }`}
                 >
@@ -182,7 +182,7 @@ export const AnomalyList: React.FC<AnomalyListProps> = ({ anomalies, onRefresh }
                 <div className="flex items-center space-x-2">
                   <span
                     className={`px-2 py-1 text-xs font-medium rounded border ${getSeverityBadgeColor(
-                      anomaly.severity as any
+                      anomaly.severity as AnomalySeverity
                     )}`}
                   >
                     {anomaly.severity}

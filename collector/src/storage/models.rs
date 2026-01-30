@@ -27,6 +27,7 @@ pub struct MetricsRow {
     pub temperatures: Option<String>, // JSON array
     pub disks: Option<String>,        // JSON array
     pub usb_devices: Option<String>,  // JSON array
+    pub gpu: Option<String>,          // JSON object
 
     // Network metrics
     pub network_rx: i64,
@@ -77,6 +78,7 @@ pub struct NewMetrics {
     pub temperatures: Option<String>, // JSON serialized
     pub disks: Option<String>,        // JSON serialized
     pub usb_devices: Option<String>,  // JSON serialized
+    pub gpu: Option<String>,          // JSON serialized
     pub network_rx: i64,
     pub network_tx: i64,
     pub network_rx_packets: i64,

@@ -11,6 +11,7 @@ pub struct SystemMetrics {
     pub disks: Vec<DiskMetrics>,
     pub usb_devices: Vec<UsbDevice>,
     pub network: NetworkMetrics,
+    pub gpu: Option<GpuMetrics>,
 }
 
 /// CPU metrics including global usage, per-core usage, and load averages
@@ -73,6 +74,20 @@ pub struct NetworkMetrics {
     pub tx_packets: u64,
 }
 
+/// GPU metrics including usage, temperature, and memory
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GpuMetrics {
+    pub name: String,
+    pub temperature: f32,
+    pub usage_percent: f32,
+    pub memory_usage_percent: f32,
+    pub memory_total_mb: u64,
+    pub memory_used_mb: u64,
+    pub memory_free_mb: u64,
+    pub power_draw_watts: f32,
+    pub fan_speed_percent: f32,
+}
+
 /// Anomaly detection result
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Anomaly {
@@ -101,5 +116,6 @@ pub enum AnomalyCategory {
     Disk,
     Usb,
     Network,
+    Gpu,
     System,
 }

@@ -8,6 +8,7 @@ export interface SystemMetrics {
   disks: DiskMetrics[];
   usb_devices: UsbDevice[];
   network: NetworkMetrics;
+  gpu: GpuMetrics | null;
 }
 
 export interface CpuMetrics {
@@ -58,6 +59,18 @@ export interface NetworkMetrics {
   tx_packets: number;
 }
 
+export interface GpuMetrics {
+  name: string;
+  temperature: number;
+  usage_percent: number;
+  memory_usage_percent: number;
+  memory_total_mb: number;
+  memory_used_mb: number;
+  memory_free_mb: number;
+  power_draw_watts: number;
+  fan_speed_percent: number;
+}
+
 export interface Anomaly {
   id: string;
   timestamp: string; // ISO 8601 datetime
@@ -80,6 +93,7 @@ export enum AnomalyCategory {
   Disk = 'Disk',
   Usb = 'Usb',
   Network = 'Network',
+  Gpu = 'Gpu',
   System = 'System',
 }
 

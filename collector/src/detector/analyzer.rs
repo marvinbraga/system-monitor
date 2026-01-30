@@ -183,6 +183,7 @@ mod tests {
                 rx_packets: 0,
                 tx_packets: 0,
             },
+            gpu: None,
         };
 
         let previous = SystemMetrics {
@@ -215,6 +216,7 @@ mod tests {
                 rx_packets: 0,
                 tx_packets: 0,
             },
+            gpu: None,
         };
 
         let delta = calculate_delta(&current, &previous);

@@ -48,6 +48,14 @@ impl MetricsRepository {
         Ok(())
     }
 
+    /// Fecha o pool de conexões do banco de dados graciosamente
+    pub async fn close(&self) -> Result<(), SqlxError> {
+        tracing::info!("Closing database connection pool...");
+        self.pool.close().await;
+        tracing::info!("Database connection pool closed");
+        Ok(())
+    }
+
     /// Stores system metrics in the database
     ///
     /// # Arguments
@@ -77,11 +85,12 @@ impl MetricsRepository {
                 temperatures,
                 disks,
                 usb_devices,
+                gpu,
                 network_rx,
                 network_tx,
                 network_rx_packets,
                 network_tx_packets
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             "#,
         )
         .bind(new_metrics.timestamp.to_rfc3339())
@@ -99,6 +108,7 @@ impl MetricsRepository {
         .bind(&new_metrics.temperatures)
         .bind(&new_metrics.disks)
         .bind(&new_metrics.usb_devices)
+        .bind(&new_metrics.gpu)
         .bind(new_metrics.network_rx)
         .bind(new_metrics.network_tx)
         .bind(new_metrics.network_rx_packets)
@@ -384,6 +394,9 @@ impl MetricsRepository {
                     SqlxError::Protocol(format!("Failed to serialize usb_devices: {}", e))
                 })?)
             },
+            gpu: metrics.gpu.as_ref().map(|g| {
+                serde_json::to_string(g).unwrap_or_default()
+            }),
             network_rx: metrics.network.rx_bytes as i64,
             network_tx: metrics.network.tx_bytes as i64,
             network_rx_packets: metrics.network.rx_packets as i64,
@@ -405,6 +418,7 @@ impl MetricsRepository {
             AnomalyCategory::Disk => "Disk",
             AnomalyCategory::Usb => "Usb",
             AnomalyCategory::Network => "Network",
+            AnomalyCategory::Gpu => "Gpu",
             AnomalyCategory::System => "System",
         };
 
@@ -420,7 +434,7 @@ impl MetricsRepository {
 
     fn convert_from_metrics_row(&self, row: MetricsRow) -> Result<SystemMetrics, SqlxError> {
         use shared::types::{
-            CpuMetrics, DiskMetrics, MemoryMetrics, NetworkMetrics, Temperature, UsbDevice,
+            CpuMetrics, DiskMetrics, GpuMetrics, MemoryMetrics, NetworkMetrics, Temperature, UsbDevice,
         };
 
         let timestamp = DateTime::parse_from_rfc3339(&row.timestamp)
@@ -454,6 +468,12 @@ impl MetricsRepository {
             Vec::new()
         };
 
+        let gpu: Option<GpuMetrics> = if let Some(gpu_json) = row.gpu {
+            serde_json::from_str(&gpu_json).ok()
+        } else {
+            None
+        };
+
         Ok(SystemMetrics {
             timestamp,
             cpu: CpuMetrics {
@@ -480,6 +500,7 @@ impl MetricsRepository {
                 rx_packets: row.network_rx_packets as u64,
                 tx_packets: row.network_tx_packets as u64,
             },
+            gpu,
         })
     }
 
@@ -507,6 +528,7 @@ impl MetricsRepository {
             "Disk" => AnomalyCategory::Disk,
             "Usb" => AnomalyCategory::Usb,
             "Network" => AnomalyCategory::Network,
+            "Gpu" => AnomalyCategory::Gpu,
             "System" => AnomalyCategory::System,
             _ => {
                 return Err(SqlxError::Protocol(format!(

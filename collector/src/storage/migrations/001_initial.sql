@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS metrics (
     temperatures TEXT,  -- JSON array of temperature sensors
     disks TEXT,        -- JSON array of disk metrics
     usb_devices TEXT,  -- JSON array of USB devices
+    gpu TEXT,          -- JSON object of GPU metrics (optional)
 
     -- Network metrics
     network_rx INTEGER NOT NULL,
@@ -39,7 +40,7 @@ CREATE TABLE IF NOT EXISTS anomalies (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     timestamp DATETIME NOT NULL,
     severity TEXT NOT NULL CHECK(severity IN ('Info', 'Warning', 'Critical')),
-    category TEXT NOT NULL CHECK(category IN ('Cpu', 'Memory', 'Temperature', 'Disk', 'Usb', 'Network', 'System')),
+    category TEXT NOT NULL CHECK(category IN ('Cpu', 'Memory', 'Temperature', 'Disk', 'Usb', 'Network', 'Gpu', 'System')),
     message TEXT NOT NULL,
     metrics TEXT NOT NULL,  -- JSON object with relevant metrics
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP

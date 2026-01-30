@@ -1,5 +1,6 @@
 pub mod cpu;
 pub mod disk;
+pub mod gpu;
 pub mod memory;
 pub mod network;
 pub mod temperature;
@@ -11,6 +12,7 @@ use std::io;
 
 use cpu::CpuCollector;
 use disk::DiskCollector;
+use gpu::GpuCollector;
 use memory::MemoryCollector;
 use network::NetworkCollector;
 use temperature::TemperatureCollector;
@@ -24,6 +26,7 @@ pub struct MetricsCollector {
     disk: DiskCollector,
     usb: UsbCollector,
     network: NetworkCollector,
+    gpu: GpuCollector,
 }
 
 impl MetricsCollector {
@@ -36,6 +39,7 @@ impl MetricsCollector {
             disk: DiskCollector::new()?,
             usb: UsbCollector::new(),
             network: NetworkCollector::new(),
+            gpu: GpuCollector::new(),
         })
     }
 
@@ -54,6 +58,7 @@ impl MetricsCollector {
             disks: self.disk.collect(),
             usb_devices: self.usb.collect(),
             network: self.network.collect(),
+            gpu: self.gpu.collect(),
         })
     }
 }

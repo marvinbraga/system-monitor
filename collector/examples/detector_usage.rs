@@ -114,6 +114,7 @@ fn create_sample_metrics(
             rx_packets: 1000,
             tx_packets: 500,
         },
+        gpu: None,
     }
 }
 
