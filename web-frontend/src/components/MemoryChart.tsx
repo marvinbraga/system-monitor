@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 import {
-  AreaChart,
+  ComposedChart,
   Area,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from 'recharts';
 import { SystemMetrics } from '../types/metrics';
@@ -42,6 +44,10 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
 
   const latestMetrics = history[history.length - 1].memory;
 
+  // Calculate Y-axis domain to show both used and total memory
+  const maxMemoryGB = chartData.length > 0 ? chartData[0].totalGB : 0;
+  const yAxisMax = Math.ceil(maxMemoryGB * 1.05); // Add 5% padding
+
   // Theme-aware colors
   const axisColor = theme === 'dark' ? '#9ca3af' : '#6b7280';
   const gridColor = theme === 'dark' ? '#374151' : '#e5e7eb';
@@ -64,7 +70,7 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
-        <AreaChart data={chartData}>
+        <ComposedChart data={chartData}>
           <defs>
             <linearGradient id="memoryGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -81,7 +87,7 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
           <YAxis
             stroke={axisColor}
             tick={{ fontSize: 12, fill: axisColor }}
-            domain={[0, 'dataMax']}
+            domain={[0, yAxisMax]}
             label={{ value: 'Memory (GB)', angle: -90, position: 'insideLeft', fill: axisColor }}
           />
           <Tooltip
@@ -100,14 +106,29 @@ export const MemoryChart: React.FC<MemoryChartProps> = ({ history }) => {
               return [`${value.toFixed(2)} GB`, name === 'usedGB' ? 'Used' : 'Total'];
             }}
           />
+          <Legend
+            wrapperStyle={{ color: axisColor }}
+            iconType="line"
+          />
           <Area
             type="monotone"
             dataKey="usedGB"
             stroke="#10b981"
             strokeWidth={2}
             fill="url(#memoryGradient)"
+            name="Used Memory"
           />
-        </AreaChart>
+          <Line
+            type="monotone"
+            dataKey="totalGB"
+            stroke="#ef4444"
+            strokeWidth={2}
+            strokeDasharray="5 5"
+            dot={false}
+            name="Maximum Memory"
+            isAnimationActive={false}
+          />
+        </ComposedChart>
       </ResponsiveContainer>
 
       {/* Memory breakdown */}
