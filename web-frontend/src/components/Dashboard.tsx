@@ -3,11 +3,11 @@ import { useMetrics } from '../hooks/useMetrics';
 import { useTheme } from '../hooks/useTheme';
 import { CpuChart } from './CpuChart';
 import { MemoryChart } from './MemoryChart';
+import { TemperatureChart } from './TemperatureChart';
 import { TemperatureGauge } from './TemperatureGauge';
 import { DiskUsage } from './DiskUsage';
 import { AnomalyList } from './AnomalyList';
 import { SystemInfo } from './SystemInfo';
-import { UsbDevice } from '../types/metrics';
 
 type UsbSortOption = 'product-asc' | 'product-desc' | 'manufacturer-asc' | 'manufacturer-desc' | 'id-asc' | 'id-desc' | 'none';
 
@@ -149,6 +149,7 @@ export const Dashboard: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <CpuChart history={metricsHistory} />
             <MemoryChart history={metricsHistory} />
+            <TemperatureChart history={metricsHistory} />
           </div>
 
           {/* Temperature and Disk */}
