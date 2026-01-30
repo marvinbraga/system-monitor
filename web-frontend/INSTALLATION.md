@@ -31,7 +31,7 @@ This guide provides detailed instructions for setting up and running the System 
 ### 1. Navigate to the web-frontend directory
 
 ```bash
-cd /home/marvinbraga/dados/system-monitor/web-frontend
+cd /path/to/system-monitor/web-frontend
 ```
 
 ### 2. Install dependencies

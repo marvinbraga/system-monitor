@@ -570,7 +570,7 @@ The System Monitor Web Dashboard is a **production-ready** application that prov
 ## Quick Start Command
 
 ```bash
-cd /home/marvinbraga/dados/system-monitor/web-frontend
+cd /path/to/system-monitor/web-frontend
 ./run-dev.sh
 ```
 

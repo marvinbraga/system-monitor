@@ -56,7 +56,7 @@ Docker Container Issues:
 
 ```bash
 # Navigate to project directory
-cd /home/marvinbraga/dados/system-monitor
+cd /path/to/system-monitor
 
 # Install collector as systemd service
 sudo ./scripts/install.sh
